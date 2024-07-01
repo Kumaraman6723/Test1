@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Boxicons CSS for icons -->
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="style1.css" />
+    <!-- Additional stylesheet for charts -->
+    <link rel="stylesheet" href="chart-styles.css" />
+    <title>Temp Dashboard</title>
+  </head>
+  <body>
+    <!-- Sidebar Section -->
+    <div class="sidebar">
+      <!-- Logo Section -->
+      <a href="#" class="logo">
+        <i class="bx bx-code-alt"></i>
+        <div class="logo-name"><span>temp</span></div>
+      </a>
+      <!-- Sidebar Menu -->
+      <ul class="side-menu">
+        <li>
+          <a href="#" id="dashboard-link"
+            ><i class="bx bxs-dashboard"></i>Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="#" id="shop-link"><i class="bx bx-store-alt"></i>Shop</a>
+        </li>
+        <li class="active">
+          <a href="#" id="analytics-link"
+            ><i class="bx bx-analyse"></i>Analytics</a
+          >
+        </li>
+        <li>
+          <a href="#" id="tickets-link"
+            ><i class="bx bx-message-square-dots"></i>Tickets</a
+          >
+        </li>
+        <li>
+          <a href="#" id="settings-link"><i class="bx bx-cog"></i>Settings</a>
+        </li>
+      </ul>
+      <!-- Logout Button -->
+      <ul class="side-menu">
+        <li>
+          <a href="#" onclick="signOut()" class="logout">
+            <i class="bx bx-log-out-circle"></i>
+            Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+    <!-- End of Sidebar -->
+
+    <!-- Main Content Section -->
+    <div class="content">
+      <!-- Navbar Section -->
+      <nav>
+        <i class="bx bx-menu"></i>
+        <form action="#">
+          <div class="form-input">
+            <input type="search" placeholder="Search..." />
+            <button class="search-btn" type="submit">
+              <i class="bx bx-search"></i>
+            </button>
+          </div>
+        </form>
+        <!-- Theme Toggle Switch -->
+        <input type="checkbox" id="theme-toggle" hidden />
+        <label for="theme-toggle" class="theme-toggle"></label>
+        <!-- Notification and Profile Links -->
+        <a href="#" class="notif">
+          <i class="bx bx-bell"></i>
+          <span class="count">1</span>
+        </a>
+        <a href="profile.html" class="profile">
+          <img
+            src="https://img.icons8.com/?size=100&id=rrtYnzKMTlUr&format=png&color=000000"
+          />
+        </a>
+      </nav>
+      <!-- End of Navbar -->
+
+      <main>
+        <!-- Header Section -->
+        <div class="header" id="clickable-div">
+          <div class="left">
+            <h1>Dashboard</h1>
+            <ul class="breadcrumb"></ul>
+          </div>
+        </div>
+
+        <!-- Content Sections -->
+        <div id="dashboard-content" class="content-section">
+          <h2>Dashboard Content</h2>
+          <p>
+            Welcome to the dashboard! Here you can see an overview of your
+            activity.
+          </p>
+        </div>
+
+        <div id="shop-content" class="content-section" style="display: none">
+          <h2>Shop Content</h2>
+          <p>Here you can browse and purchase products.</p>
+        </div>
+
+        <div
+          id="analytics-content"
+          class="content-section"
+          style="display: none"
+        >
+          <h2>Analytics Content</h2>
+          <p>Here you can view detailed analytics of your data.</p>
+
+          <!-- ChartJS Integration -->
+          <div class="chart-container">
+            <h1 class="chart-title">ChartJS Bar Chart with JSON Data API</h1>
+            <canvas id="barChart"></canvas>
+          </div>
+          <div class="chart-container">
+            <h1 class="chart-title">ChartJS Line Chart with JSON Data API</h1>
+            <canvas id="lineChart"></canvas>
+          </div>
+          <div class="chart-container">
+            <h1 class="chart-title">ChartJS Pie Chart with JSON Data API</h1>
+            <canvas id="pieChart"></canvas>
+          </div>
+        </div>
+
+        <div id="tickets-content" class="content-section" style="display: none">
+          <h2>Tickets Content</h2>
+          <p>Here you can view and manage support tickets.</p>
+        </div>
+
+        <div id="users-content" class="content-section" style="display: none">
+          <h2>Users Content</h2>
+          <p>Here you can manage user accounts and permissions.</p>
+        </div>
+
+        <div
+          id="settings-content"
+          class="content-section"
+          style="display: none"
+        >
+          <h2>Settings Content</h2>
+          <p>Here you can adjust your account settings and preferences.</p>
+        </div>
+
+        <!-- Div to display text when the left-side div is clicked -->
+        <div
+          id="display-text"
+          style="
+            display: none;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+          "
+        >
+          <!-- Text will be inserted here -->
+        </div>
+
+        <!-- Insights Section (Placeholder) -->
+      </main>
+    </div>
+    <!-- Chart.js Library for Rendering Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <!-- Custom Script -->
+    <script src="script.js"></script>
+  </body>
+</html>
