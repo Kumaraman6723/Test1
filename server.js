@@ -169,7 +169,7 @@ app.post("/storeAuthInfo", (req, res) => {
         "Info",
         `Auth info for user ${email} stored/updated successfully.`
       );
-      res.send("Auth info received and stored/updated.");
+      res.json({ message: "Auth info received and stored/updated." });
     }
   );
 });
@@ -240,7 +240,7 @@ app.post("/updateProfile", (req, res) => {
         return res.status(500).send("Error updating profile.");
       }
       logEvent("Info", `Profile updated successfully for user ${id}.`);
-      res.send("Profile updated successfully.");
+      res.json({ message: "Profile updated successfully." });
     }
   );
 });
@@ -268,7 +268,7 @@ app.post("/updateCompanyInfo", (req, res) => {
       return res.status(500).send("Error updating company info.");
     }
     logEvent("Info", `Company info updated successfully for user ${email}.`);
-    res.send("Company info updated successfully.");
+    res.json({ message: "Company info updated successfully." });
   });
 });
 
@@ -294,7 +294,7 @@ app.post("/storeToken", (req, res) => {
       return res.status(500).send("Error storing token.");
     }
     logEvent("Info", `Token stored successfully for user ${email}.`);
-    res.send("Token stored successfully.");
+    res.json({ message: "Token stored successfully." });
   });
 });
 
@@ -316,7 +316,7 @@ app.get("/fetchToken/:email", (req, res) => {
       res.json({ token: result[0].token });
     } else {
       logEvent("Info", `Token not found for user ${email}.`);
-      res.status(404).send("Token not found.");
+      res.status(404).json({ error: "Token not found." });
     }
   });
 });
@@ -344,7 +344,7 @@ app.put("/updateToken/:email", (req, res) => {
       return res.status(500).send("Error updating token.");
     }
     logEvent("Info", `Token updated successfully for user ${email}.`);
-    res.send("Token updated successfully.");
+    res.json({ message: "Token updated successfully." });
   });
 });
 
@@ -376,11 +376,11 @@ app.get("/fetchCompanyInfo/:email", (req, res) => {
     };
 
     logEvent("Info", `Company info fetched successfully for user ${email}.`);
-    res.status(200).json(companyInfo);
+    res.json(companyInfo);
   });
 });
 
-// Example backend route using Express.js
+// Route to save device data
 app.post("/saveDeviceData", (req, res) => {
   const { email, deviceId, deviceCount } = req.body;
 
