@@ -43,16 +43,20 @@
           >
         </li>
         <li>
+          <a href="#" id="add-device-link"
+            ><i class="bx bx-devices"></i>Add Devices</a
+          >
+        </li>
+        <li>
           <a href="#" id="settings-link"><i class="bx bx-cog"></i>Settings</a>
         </li>
       </ul>
       <!-- Logout Button -->
       <ul class="side-menu">
         <li>
-          <a href="#" onclick="signOut()" class="logout">
-            <i class="bx bx-log-out-circle"></i>
-            Logout
-          </a>
+          <a href="#" onclick="signOut()" class="logout"
+            ><i class="bx bx-log-out-circle"></i>Logout</a
+          >
         </li>
       </ul>
     </div>
@@ -75,15 +79,13 @@
         <input type="checkbox" id="theme-toggle" hidden />
         <label for="theme-toggle" class="theme-toggle"></label>
         <!-- Notification and Profile Links -->
-        <a href="#" class="notif">
-          <i class="bx bx-bell"></i>
-          <span class="count">1</span>
-        </a>
-        <a href="profile.html" class="profile">
-          <img
+        <a href="#" class="notif"
+          ><i class="bx bx-bell"></i><span class="count">1</span></a
+        >
+        <a href="profile.html" class="profile"
+          ><img
             src="https://img.icons8.com/?size=100&id=rrtYnzKMTlUr&format=png&color=000000"
-          />
-        </a>
+        /></a>
       </nav>
       <!-- End of Navbar -->
 
@@ -152,25 +154,34 @@
           <p>Here you can adjust your account settings and preferences.</p>
         </div>
 
-        <!-- Div to display text when the left-side div is clicked -->
-        <div
-          id="display-text"
-          style="
-            display: none;
-            padding: 10px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-          "
-        >
-          <!-- Text will be inserted here -->
+        <!-- Add Devices Section -->
+        <!-- Add Devices Section -->
+        <div id="device-content" class="content-section" style="display: none">
+          <h2>Add Devices</h2>
+          <form id="device-form">
+            <label for="device-id">Device ID:</label>
+            <input type="text" id="device-id" name="device-id" required />
+            <br /><br />
+            <label for="device-count">Number of Devices:</label>
+            <button type="button" onclick="adjustDeviceCount(-1)">-</button>
+            <input
+              type="number"
+              id="device-count"
+              name="device-count"
+              value="1"
+              min="1"
+              readonly
+            />
+            <button type="button" onclick="adjustDeviceCount(1)">+</button>
+            <br /><br />
+            <button type="button" onclick="saveDeviceData()">Save</button>
+          </form>
         </div>
-
-        <!-- Insights Section (Placeholder) -->
       </main>
     </div>
+    <script src="script.js"></script>
     <!-- Chart.js Library for Rendering Charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <!-- Custom Script -->
-    <script src="script.js"></script>
   </body>
 </html>
