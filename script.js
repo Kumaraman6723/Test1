@@ -607,6 +607,11 @@ document.getElementById("tickets-link").addEventListener("click", function () {
 document.getElementById("settings-link").addEventListener("click", function () {
   showContent("settings-content");
 });
+document
+  .getElementById("add-device-link")
+  .addEventListener("click", function () {
+    showContent("device-content");
+  });
 
 // Default content to show on page load
 showContent("dashboard-content");
@@ -703,6 +708,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "analytics-link": "analytics-content",
         "tickets-link": "tickets-content",
         "settings-link": "settings-content",
+        "add-device-link": "device-content",
       };
 
       document.querySelectorAll(".side-menu a").forEach((link) => {
@@ -717,3 +723,51 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 });
+function saveDeviceData() {
+  const deviceId = document.getElementById("device-id").value;
+  const deviceCount = parseInt(
+    document.getElementById("device-count").value,
+    10
+  );
+
+  if (!deviceId || deviceCount < 1) {
+    alert("Please enter a valid Device ID and count.");
+    return;
+  }
+
+  const deviceData = {
+    email: userEmail, // Replace with actual email
+    deviceId: deviceId,
+    deviceCount: deviceCount,
+  };
+
+  console.log("Saving device data:", deviceData);
+
+  // Send device data to server (example using fetch)
+  fetch("http://localhost:3001/saveDeviceData", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(deviceData),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Device data saved:", data);
+      alert("Device data saved successfully!");
+      // Optionally clear form fields after saving
+      document.getElementById("device-id").value = "";
+      document.getElementById("device-count").value = 1;
+    })
+    .catch((error) => {
+      console.error("Error saving device data:", error);
+      alert("Failed to save device data. Please try again.");
+    });
+}
+function adjustDeviceCount(amount) {
+  const deviceCountInput = document.getElementById("device-count");
+  let currentCount = parseInt(deviceCountInput.value, 10);
+  currentCount += amount;
+  if (currentCount < 1) currentCount = 1;
+  deviceCountInput.value = currentCount;
+}
