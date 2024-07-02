@@ -56,6 +56,17 @@ CREATE TABLE IF NOT EXISTS logs (
 );
 `;
 
+// Create Devices table query
+const createDevicesTableQuery = `
+CREATE TABLE IF NOT EXISTS devices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255),
+    deviceId VARCHAR(255),
+    deviceCount INT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+`;
+
 // Execute create table queries
 db.query(createUsersTableQuery, (err, result) => {
   if (err) {
@@ -71,6 +82,14 @@ db.query(createLogsTableQuery, (err, result) => {
     return;
   }
   console.log("Logs table created or already exists.");
+});
+
+db.query(createDevicesTableQuery, (err, result) => {
+  if (err) {
+    console.error("Error creating devices table:", err);
+    return;
+  }
+  console.log("Devices table created or already exists.");
 });
 
 // Function to log events into the Logs table
@@ -358,6 +377,28 @@ app.get("/fetchCompanyInfo/:email", (req, res) => {
 
     logEvent("Info", `Company info fetched successfully for user ${email}.`);
     res.status(200).json(companyInfo);
+  });
+});
+
+// Example backend route using Express.js
+app.post("/saveDeviceData", (req, res) => {
+  const { email, deviceId, deviceCount } = req.body;
+
+  // Replace with your database insertion logic
+  // Example SQL query to insert device data into a database
+  const insertDeviceQuery = `
+    INSERT INTO devices (email, deviceId, deviceCount)
+    VALUES (?, ?, ?)
+  `;
+
+  // Execute query using your database library (e.g., MySQL, PostgreSQL, etc.)
+  db.query(insertDeviceQuery, [email, deviceId, deviceCount], (err, result) => {
+    if (err) {
+      console.error("Error saving device data:", err);
+      return res.status(500).send("Error saving device data.");
+    }
+    console.log("Device data saved successfully.");
+    res.json({ message: "Device data saved successfully." });
   });
 });
 
