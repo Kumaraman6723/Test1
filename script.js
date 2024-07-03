@@ -730,28 +730,33 @@ function saveDeviceData() {
     10
   );
 
-  if (!deviceId || deviceCount < 1) {
+  if (!deviceId || isNaN(deviceCount) || deviceCount < 1) {
     alert("Please enter a valid Device ID and count.");
     return;
   }
 
   const deviceData = {
-    email: userEmail, // Replace with actual email
+    email: userEmail, // Replace with the actual email variable
     deviceId: deviceId,
     deviceCount: deviceCount,
   };
 
   console.log("Saving device data:", deviceData);
 
-  // Send device data to server (example using fetch)
-  fetch("http://localhost:3001/saveDeviceData", {
+  // Send device data to the server
+  fetch("http://localhost:3001/storeDeviceInfo", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(deviceData),
   })
-    .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Server responded with status ${response.status}`);
+      }
+      return response.json();
+    })
     .then((data) => {
       console.log("Device data saved:", data);
       alert("Device data saved successfully!");
@@ -764,6 +769,7 @@ function saveDeviceData() {
       alert("Failed to save device data. Please try again.");
     });
 }
+
 function adjustDeviceCount(amount) {
   const deviceCountInput = document.getElementById("device-count");
   let currentCount = parseInt(deviceCountInput.value, 10);
