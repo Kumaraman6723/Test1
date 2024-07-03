@@ -3,26 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Boxicons CSS for icons -->
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
     />
-    <!-- Main stylesheet -->
     <link rel="stylesheet" href="style1.css" />
-    <!-- Additional stylesheet for charts -->
     <link rel="stylesheet" href="chart-styles.css" />
     <title>Temp Dashboard</title>
   </head>
   <body>
-    <!-- Sidebar Section -->
     <div class="sidebar">
-      <!-- Logo Section -->
       <a href="#" class="logo">
         <i class="bx bx-code-alt"></i>
         <div class="logo-name"><span>temp</span></div>
       </a>
-      <!-- Sidebar Menu -->
       <ul class="side-menu">
         <li>
           <a href="#" id="dashboard-link"
@@ -48,10 +42,14 @@
           >
         </li>
         <li>
+          <a href="#" id="view-device-link"
+            ><i class="bx bx-show-alt"></i>View Devices</a
+          >
+        </li>
+        <li>
           <a href="#" id="settings-link"><i class="bx bx-cog"></i>Settings</a>
         </li>
       </ul>
-      <!-- Logout Button -->
       <ul class="side-menu">
         <li>
           <a href="#" onclick="signOut()" class="logout"
@@ -60,11 +58,7 @@
         </li>
       </ul>
     </div>
-    <!-- End of Sidebar -->
-
-    <!-- Main Content Section -->
     <div class="content">
-      <!-- Navbar Section -->
       <nav>
         <i class="bx bx-menu"></i>
         <form action="#">
@@ -75,10 +69,8 @@
             </button>
           </div>
         </form>
-        <!-- Theme Toggle Switch -->
         <input type="checkbox" id="theme-toggle" hidden />
         <label for="theme-toggle" class="theme-toggle"></label>
-        <!-- Notification and Profile Links -->
         <a href="#" class="notif"
           ><i class="bx bx-bell"></i><span class="count">1</span></a
         >
@@ -87,18 +79,13 @@
             src="https://img.icons8.com/?size=100&id=rrtYnzKMTlUr&format=png&color=000000"
         /></a>
       </nav>
-      <!-- End of Navbar -->
-
       <main>
-        <!-- Header Section -->
         <div class="header" id="clickable-div">
           <div class="left">
             <h1>Dashboard</h1>
             <ul class="breadcrumb"></ul>
           </div>
         </div>
-
-        <!-- Content Sections -->
         <div id="dashboard-content" class="content-section">
           <h2>Dashboard Content</h2>
           <p>
@@ -106,12 +93,10 @@
             activity.
           </p>
         </div>
-
         <div id="shop-content" class="content-section" style="display: none">
           <h2>Shop Content</h2>
           <p>Here you can browse and purchase products.</p>
         </div>
-
         <div
           id="analytics-content"
           class="content-section"
@@ -119,8 +104,6 @@
         >
           <h2>Analytics Content</h2>
           <p>Here you can view detailed analytics of your data.</p>
-
-          <!-- ChartJS Integration -->
           <div class="chart-container">
             <h1 class="chart-title">ChartJS Bar Chart with JSON Data API</h1>
             <canvas id="barChart"></canvas>
@@ -134,17 +117,14 @@
             <canvas id="pieChart"></canvas>
           </div>
         </div>
-
         <div id="tickets-content" class="content-section" style="display: none">
           <h2>Tickets Content</h2>
           <p>Here you can view and manage support tickets.</p>
         </div>
-
         <div id="users-content" class="content-section" style="display: none">
           <h2>Users Content</h2>
           <p>Here you can manage user accounts and permissions.</p>
         </div>
-
         <div
           id="settings-content"
           class="content-section"
@@ -153,35 +133,74 @@
           <h2>Settings Content</h2>
           <p>Here you can adjust your account settings and preferences.</p>
         </div>
-
-        <!-- Add Devices Section -->
-        <!-- Add Devices Section -->
         <div id="device-content" class="content-section" style="display: none">
           <h2>Add Devices</h2>
           <form id="device-form">
-            <label for="device-id">Device ID:</label>
-            <input type="text" id="device-id" name="device-id" required />
-            <br /><br />
-            <label for="device-count">Number of Devices:</label>
-            <button type="button" onclick="adjustDeviceCount(-1)">-</button>
+            <label for="entityName">Entity Name</label>
+            <input type="text" id="entityName" name="entityName" required />
+
+            <label for="deviceIMEI">Device IMEI</label>
+            <input type="text" id="deviceIMEI" name="deviceIMEI" required />
+
+            <label for="simICCId">SIM ICC ID</label>
+            <input type="text" id="simICCId" name="simICCId" required />
+
+            <label for="batterySLNo">Battery SL No</label>
+            <input type="text" id="batterySLNo" name="batterySLNo" required />
+
+            <label for="panelSLNo">Panel SL No</label>
+            <input type="text" id="panelSLNo" name="panelSLNo" required />
+
+            <label for="luminarySLNo">Luminary SL No</label>
+            <input type="text" id="luminarySLNo" name="luminarySLNo" required />
+
+            <label for="mobileNo">Mobile No</label>
+            <input type="text" id="mobileNo" name="mobileNo" required />
+
+            <label for="district">District</label>
+            <input type="text" id="district" name="district" required />
+
+            <label for="panchayat">Panchayat</label>
+            <input type="text" id="panchayat" name="panchayat" required />
+
+            <label for="block">Block</label>
+            <input type="text" id="block" name="block" required />
+
+            <label for="wardNo">Ward No</label>
+            <input type="text" id="wardNo" name="wardNo" required />
+
+            <label for="poleNo">Pole No</label>
+            <input type="text" id="poleNo" name="poleNo" required />
+
+            <label for="active">Active</label>
+            <select id="active" name="active" required>
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+
+            <label for="installationDate">Installation Date</label>
             <input
-              type="number"
-              id="device-count"
-              name="device-count"
-              value="1"
-              min="1"
-              readonly
+              type="date"
+              id="installationDate"
+              name="installationDate"
+              required
             />
-            <button type="button" onclick="adjustDeviceCount(1)">+</button>
-            <br /><br />
-            <button type="button" onclick="saveDeviceData()">Save</button>
+
+            <button type="submit">Submit</button>
           </form>
+        </div>
+        <div
+          id="view-device-content"
+          class="content-section"
+          style="display: none"
+        >
+          <h2>View Devices</h2>
+          <div id="device-list"></div>
         </div>
       </main>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="script.js"></script>
-    <!-- Chart.js Library for Rendering Charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
-    <!-- Custom Script -->
   </body>
 </html>
