@@ -2,9 +2,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mysql = require("mysql2");
+const axios = require("axios");
 
 const app = express();
 const port = 3001;
+const webhookUrl = "http://localhost:3002/webhook"; // Change to your webhook URL
 
 // Middleware
 app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
@@ -27,6 +29,18 @@ db.connect((err) => {
   }
   console.log("Connected to the database.");
 });
+
+// Function to send data to webhook
+function sendToWebhook(data) {
+  axios
+    .post(webhookUrl, data)
+    .then((response) => {
+      console.log(`Webhook sent successfully: ${response.status}`);
+    })
+    .catch((error) => {
+      console.error(`Error sending webhook: ${error.message}`);
+    });
+}
 
 // Create Users table query
 const createUsersTableQuery = `
@@ -118,9 +132,23 @@ app.post("/checkUser", (req, res) => {
     if (results.length > 0) {
       logEvent("Info", `User with email ${email} found.`);
       res.json({ exists: true, userInfo: results[0] });
+
+      // Send webhook for user check
+      const webhookData = {
+        event: "user_checked",
+        user: { email },
+      };
+      sendToWebhook(webhookData);
     } else {
       logEvent("Info", `User with email ${email} not found.`);
       res.json({ exists: false });
+
+      // Send webhook for user not found
+      const webhookData = {
+        event: "user_not_found",
+        user: { email },
+      };
+      sendToWebhook(webhookData);
     }
   });
 });
@@ -170,6 +198,13 @@ app.post("/storeAuthInfo", (req, res) => {
         `Auth info for user ${email} stored/updated successfully.`
       );
       res.json({ message: "Auth info received and stored/updated." });
+
+      // Send webhook for user sign-up
+      const webhookData = {
+        event: "user_signed_up",
+        user: { id, email, name, gender, birthday },
+      };
+      sendToWebhook(webhookData);
     }
   );
 });
@@ -185,6 +220,13 @@ app.get("/logs", (req, res) => {
       return res.status(500).send("Error fetching logs.");
     }
     res.json(result);
+
+    // Send webhook for fetching logs
+    const webhookData = {
+      event: "logs_fetched",
+      logs: result,
+    };
+    sendToWebhook(webhookData);
   });
 });
 
@@ -241,6 +283,22 @@ app.post("/updateProfile", (req, res) => {
       }
       logEvent("Info", `Profile updated successfully for user ${id}.`);
       res.json({ message: "Profile updated successfully." });
+
+      // Send webhook for profile update
+      const webhookData = {
+        event: "profile_updated",
+        user: {
+          id,
+          name,
+          email,
+          gender,
+          birthday,
+          profilepicture,
+          countryCode,
+          contact,
+        },
+      };
+      sendToWebhook(webhookData);
     }
   );
 });
@@ -269,6 +327,13 @@ app.post("/updateCompanyInfo", (req, res) => {
     }
     logEvent("Info", `Company info updated successfully for user ${email}.`);
     res.json({ message: "Company info updated successfully." });
+
+    // Send webhook for company info update
+    const webhookData = {
+      event: "company_info_updated",
+      user: { email, orgName, position },
+    };
+    sendToWebhook(webhookData);
   });
 });
 
@@ -295,6 +360,13 @@ app.post("/storeToken", (req, res) => {
     }
     logEvent("Info", `Token stored successfully for user ${email}.`);
     res.json({ message: "Token stored successfully." });
+
+    // Send webhook for token store
+    const webhookData = {
+      event: "token_stored",
+      user: { email, token },
+    };
+    sendToWebhook(webhookData);
   });
 });
 
@@ -314,9 +386,23 @@ app.get("/fetchToken/:email", (req, res) => {
     if (result.length > 0) {
       logEvent("Info", `Token fetched successfully for user ${email}.`);
       res.json({ token: result[0].token });
+
+      // Send webhook for token fetch
+      const webhookData = {
+        event: "token_fetched",
+        user: { email, token: result[0].token },
+      };
+      sendToWebhook(webhookData);
     } else {
       logEvent("Info", `Token not found for user ${email}.`);
       res.status(404).json({ error: "Token not found." });
+
+      // Send webhook for token not found
+      const webhookData = {
+        event: "token_not_found",
+        user: { email },
+      };
+      sendToWebhook(webhookData);
     }
   });
 });
@@ -345,6 +431,13 @@ app.put("/updateToken/:email", (req, res) => {
     }
     logEvent("Info", `Token updated successfully for user ${email}.`);
     res.json({ message: "Token updated successfully." });
+
+    // Send webhook for token update
+    const webhookData = {
+      event: "token_updated",
+      user: { email, token },
+    };
+    sendToWebhook(webhookData);
   });
 });
 
@@ -377,6 +470,13 @@ app.get("/fetchCompanyInfo/:email", (req, res) => {
 
     logEvent("Info", `Company info fetched successfully for user ${email}.`);
     res.json(companyInfo);
+
+    // Send webhook for company info fetch
+    const webhookData = {
+      event: "company_info_fetched",
+      user: { email, orgName: result[0].orgName, position: result[0].position },
+    };
+    sendToWebhook(webhookData);
   });
 });
 
@@ -399,6 +499,13 @@ app.post("/saveDeviceData", (req, res) => {
     }
     console.log("Device data saved successfully.");
     res.json({ message: "Device data saved successfully." });
+
+    // Send webhook for device data save
+    const webhookData = {
+      event: "device_data_saved",
+      device: { email, deviceId, deviceCount },
+    };
+    sendToWebhook(webhookData);
   });
 });
 
