@@ -29,24 +29,6 @@ db.connect((err) => {
   }
   console.log("Connected to the database.");
 });
-const createWebhooksTableQuery = `
-CREATE TABLE IF NOT EXISTS webhooks (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_email VARCHAR(255),
-    event VARCHAR(255),
-    data TEXT,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-`;
-
-// Execute create webhooks table query
-db.query(createWebhooksTableQuery, (err, result) => {
-  if (err) {
-    console.error("Error creating webhooks table:", err);
-    return;
-  }
-  console.log("Webhooks table created or already exists.");
-});
 
 // Create Users table query
 const createUsersTableQuery = `
@@ -111,7 +93,30 @@ db.query(createDevicesTableQuery, (err, result) => {
   }
   console.log("Devices table created or already exists.");
 });
+const createWebhooksTableQuery = `
+CREATE TABLE IF NOT EXISTS webhooks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_email VARCHAR(255),
+    event VARCHAR(255),
+    data TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+`;
+
+// Execute create webhooks table query
+db.query(createWebhooksTableQuery, (err, result) => {
+  if (err) {
+    console.error("Error creating webhooks table:", err);
+    return;
+  }
+  console.log("Webhooks table created or already exists.");
+});
+
 function sendToWebhook(data) {
+  if (!data.user || !data.user.email) {
+    console.error("Invalid webhook data:", data);
+    return;
+  }
   const { user } = data;
 
   // Save webhook data to the database
@@ -313,241 +318,111 @@ app.post("/updateProfile", (req, res) => {
     (err, result) => {
       if (err) {
         console.error("Error updating profile:", err);
-        logEvent(
-          "Error",
-          `Error updating profile for user ${id}: ${err.message}`
-        );
+        logEvent("Error", `Error updating profile: ${err.message}`);
         return res.status(500).send("Error updating profile.");
       }
-      logEvent("Info", `Profile updated successfully for user ${id}.`);
+      logEvent("Info", `Profile for user ${email} updated successfully.`);
       res.json({ message: "Profile updated successfully." });
 
       // Send webhook for profile update
       const webhookData = {
         event: "profile_updated",
-        user: {
-          id,
-          name,
-          email,
-          gender,
-          birthday,
-          profilepicture,
-          countryCode,
-          contact,
-        },
+        user: { id, email, name, gender, birthday },
       };
       sendToWebhook(webhookData);
     }
   );
 });
 
-// Route to update company information
-app.post("/updateCompanyInfo", (req, res) => {
-  const { email, orgName, position } = req.body;
+// Route to handle device information
+app.post("/storeDeviceInfo", (req, res) => {
+  const { email, deviceId } = req.body;
+  if (!email || !deviceId) {
+    return res.status(400).json({ error: "Email and deviceId are required." });
+  }
 
-  // SQL query to update company info
-  const updateQuery = `
-    UPDATE users 
-    SET orgName = ?,
-        position = ?
-    WHERE email = ?
-  `;
-
-  // Execute query
-  db.query(updateQuery, [orgName, position, email], (err, result) => {
+  const fetchDeviceQuery =
+    "SELECT * FROM devices WHERE email = ? AND deviceId = ?";
+  db.query(fetchDeviceQuery, [email, deviceId], (err, results) => {
     if (err) {
-      console.error("Error updating company info:", err);
-      logEvent(
-        "Error",
-        `Error updating company info for user ${email}: ${err.message}`
-      );
-      return res.status(500).send("Error updating company info.");
+      console.error("Error fetching device information:", err);
+      return res
+        .status(500)
+        .json({ error: "Error fetching device information." });
     }
-    logEvent("Info", `Company info updated successfully for user ${email}.`);
-    res.json({ message: "Company info updated successfully." });
 
-    // Send webhook for company info update
-    const webhookData = {
-      event: "company_info_updated",
-      user: { email, orgName, position },
-    };
-    sendToWebhook(webhookData);
-  });
-});
+    if (results.length > 0) {
+      // Device exists, update the timestamp and deviceCount
+      const updateDeviceQuery =
+        "UPDATE devices SET deviceCount = deviceCount + 1, timestamp = CURRENT_TIMESTAMP WHERE email = ? AND deviceId = ?";
+      db.query(updateDeviceQuery, [email, deviceId], (err, result) => {
+        if (err) {
+          console.error("Error updating device information:", err);
+          return res
+            .status(500)
+            .json({ error: "Error updating device information." });
+        }
+        res.json({ message: "Device information updated successfully." });
 
-// Route to store user token
-app.post("/storeToken", (req, res) => {
-  const { token, email } = req.body;
-
-  // SQL query to update user token
-  const updateTokenQuery = `
-    UPDATE users 
-    SET token = ?
-    WHERE email = ?
-  `;
-
-  // Execute query
-  db.query(updateTokenQuery, [token, email], (err, result) => {
-    if (err) {
-      console.error("Error storing token:", err);
-      logEvent(
-        "Error",
-        `Error storing token for user ${email}: ${err.message}`
-      );
-      return res.status(500).send("Error storing token.");
-    }
-    logEvent("Info", `Token stored successfully for user ${email}.`);
-    res.json({ message: "Token stored successfully." });
-
-    // Send webhook for token store
-    const webhookData = {
-      event: "token_stored",
-      user: { email, token },
-    };
-    sendToWebhook(webhookData);
-  });
-});
-
-// Route to fetch user token
-app.get("/fetchToken/:email", (req, res) => {
-  const { email } = req.params;
-  const fetchTokenQuery = "SELECT token FROM users WHERE email = ?";
-  db.query(fetchTokenQuery, [email], (err, result) => {
-    if (err) {
-      console.error("Error fetching token:", err);
-      logEvent(
-        "Error",
-        `Error fetching token for user ${email}: ${err.message}`
-      );
-      return res.status(500).send("Error fetching token.");
-    }
-    if (result.length > 0) {
-      logEvent("Info", `Token fetched successfully for user ${email}.`);
-      res.json({ token: result[0].token });
-
-      // Send webhook for token fetch
-      const webhookData = {
-        event: "token_fetched",
-        user: { email, token: result[0].token },
-      };
-      sendToWebhook(webhookData);
+        // Send webhook for device update
+        const webhookData = {
+          event: "device_updated",
+          user: { email },
+        };
+        sendToWebhook(webhookData);
+      });
     } else {
-      logEvent("Info", `Token not found for user ${email}.`);
-      res.status(404).json({ error: "Token not found." });
+      // Device does not exist, insert new record
+      const insertDeviceQuery =
+        "INSERT INTO devices (email, deviceId, deviceCount) VALUES (?, ?, ?)";
+      db.query(insertDeviceQuery, [email, deviceId, 1], (err, result) => {
+        if (err) {
+          console.error("Error inserting device information:", err);
+          return res
+            .status(500)
+            .json({ error: "Error inserting device information." });
+        }
+        res.json({ message: "Device information stored successfully." });
 
-      // Send webhook for token not found
-      const webhookData = {
-        event: "token_not_found",
-        user: { email },
-      };
-      sendToWebhook(webhookData);
+        // Send webhook for device insertion
+        const webhookData = {
+          event: "device_inserted",
+          user: { email },
+        };
+        sendToWebhook(webhookData);
+      });
     }
   });
 });
 
-// Route to update user token
-app.put("/updateToken/:email", (req, res) => {
-  const { email } = req.params;
-  const { token } = req.body;
+// Route to handle token updates
+app.post("/updateToken", (req, res) => {
+  const { id, token } = req.body;
+
+  // Validate required fields
+  if (!id || !token) {
+    return res.status(400).send("User ID and token are required.");
+  }
 
   // SQL query to update user token
-  const updateTokenQuery = `
-    UPDATE users 
-    SET token = ?
-    WHERE email = ?
-  `;
+  const updateTokenQuery = "UPDATE users SET token = ? WHERE id = ?";
 
-  // Execute query
-  db.query(updateTokenQuery, [token, email], (err, result) => {
+  db.query(updateTokenQuery, [token, id], (err, result) => {
     if (err) {
       console.error("Error updating token:", err);
-      logEvent(
-        "Error",
-        `Error updating token for user ${email}: ${err.message}`
-      );
       return res.status(500).send("Error updating token.");
     }
-    logEvent("Info", `Token updated successfully for user ${email}.`);
     res.json({ message: "Token updated successfully." });
 
     // Send webhook for token update
     const webhookData = {
       event: "token_updated",
-      user: { email, token },
+      user: { id },
     };
     sendToWebhook(webhookData);
   });
 });
 
-// Route to fetch company information by email
-app.get("/fetchCompanyInfo/:email", (req, res) => {
-  const email = req.params.email;
-
-  // SQL query to fetch company info
-  const fetchCompanyQuery =
-    "SELECT orgName, position FROM users WHERE email = ?";
-  db.query(fetchCompanyQuery, [email], (err, result) => {
-    if (err) {
-      console.error("Error fetching company info:", err);
-      logEvent(
-        "Error",
-        `Error fetching company info for user ${email}: ${err.message}`
-      );
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    if (result.length === 0) {
-      logEvent("Info", `Company info not found for user ${email}.`);
-      return res.status(404).json({ error: "Company info not found" });
-    }
-
-    const companyInfo = {
-      orgName: result[0].orgName,
-      position: result[0].position,
-      // Add other fields if needed
-    };
-
-    logEvent("Info", `Company info fetched successfully for user ${email}.`);
-    res.json(companyInfo);
-
-    // Send webhook for company info fetch
-    const webhookData = {
-      event: "company_info_fetched",
-      user: { email, orgName: result[0].orgName, position: result[0].position },
-    };
-    sendToWebhook(webhookData);
-  });
-});
-
-// Route to save device data
-app.post("/saveDeviceData", (req, res) => {
-  const { email, deviceId, deviceCount } = req.body;
-
-  // Replace with your database insertion logic
-  // Example SQL query to insert device data into a database
-  const insertDeviceQuery = `
-    INSERT INTO devices (email, deviceId, deviceCount)
-    VALUES (?, ?, ?)
-  `;
-
-  // Execute query using your database library (e.g., MySQL, PostgreSQL, etc.)
-  db.query(insertDeviceQuery, [email, deviceId, deviceCount], (err, result) => {
-    if (err) {
-      console.error("Error saving device data:", err);
-      return res.status(500).send("Error saving device data.");
-    }
-    console.log("Device data saved successfully.");
-    res.json({ message: "Device data saved successfully." });
-
-    // Send webhook for device data save
-    const webhookData = {
-      event: "device_data_saved",
-      device: { email, deviceId, deviceCount },
-    };
-    sendToWebhook(webhookData);
-  });
-});
-
-// Start server
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
