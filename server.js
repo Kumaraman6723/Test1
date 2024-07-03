@@ -29,18 +29,24 @@ db.connect((err) => {
   }
   console.log("Connected to the database.");
 });
+const createWebhooksTableQuery = `
+CREATE TABLE IF NOT EXISTS webhooks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_email VARCHAR(255),
+    event VARCHAR(255),
+    data TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+`;
 
-// Function to send data to webhook
-function sendToWebhook(data) {
-  axios
-    .post(webhookUrl, data)
-    .then((response) => {
-      console.log(`Webhook sent successfully: ${response.status}`);
-    })
-    .catch((error) => {
-      console.error(`Error sending webhook: ${error.message}`);
-    });
-}
+// Execute create webhooks table query
+db.query(createWebhooksTableQuery, (err, result) => {
+  if (err) {
+    console.error("Error creating webhooks table:", err);
+    return;
+  }
+  console.log("Webhooks table created or already exists.");
+});
 
 // Create Users table query
 const createUsersTableQuery = `
@@ -105,6 +111,38 @@ db.query(createDevicesTableQuery, (err, result) => {
   }
   console.log("Devices table created or already exists.");
 });
+function sendToWebhook(data) {
+  const { user } = data;
+
+  // Save webhook data to the database
+  const insertWebhookQuery = `
+    INSERT INTO webhooks (user_email, event, data)
+    VALUES (?, ?, ?)
+  `;
+  const webhookDataString = JSON.stringify(data);
+
+  db.query(
+    insertWebhookQuery,
+    [user.email, data.event, webhookDataString],
+    (err, result) => {
+      if (err) {
+        console.error("Error saving webhook data:", err);
+        return;
+      }
+      console.log("Webhook data saved successfully to the database.");
+    }
+  );
+
+  // Send webhook to the external URL
+  axios
+    .post(webhookUrl, data)
+    .then((response) => {
+      console.log(`Webhook sent successfully: ${response.status}`);
+    })
+    .catch((error) => {
+      console.error(`Error sending webhook: ${error.message}`);
+    });
+}
 
 // Function to log events into the Logs table
 function logEvent(eventType, eventDescription) {
