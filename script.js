@@ -724,21 +724,71 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 });
 function saveDeviceData() {
-  const deviceId = document.getElementById("device-id").value;
-  const deviceCount = parseInt(
-    document.getElementById("device-count").value,
-    10
-  );
+  const entityName = document.getElementById("entity-name").value;
+  const deviceIMEI = document.getElementById("device-imei").value;
+  const simICCId = document.getElementById("sim-icc-id").value;
+  const batterySLNo = document.getElementById("battery-sl-no").value;
+  const panelSLNo = document.getElementById("panel-sl-no").value;
+  const luminarySLNo = document.getElementById("luminary-sl-no").value;
+  const mobileNo = document.getElementById("mobile-no").value;
+  const district = document.getElementById("district").value;
+  const panchayat = document.getElementById("panchayat").value;
+  const block = document.getElementById("block").value;
+  const wardNo = document.getElementById("ward-no").value;
+  const poleNo = document.getElementById("pole-no").value;
+  const active = document.getElementById("active").checked;
+  const installationDate = document.getElementById("installation-date").value;
 
-  if (!deviceId || isNaN(deviceCount) || deviceCount < 1) {
-    alert("Please enter a valid Device ID and count.");
+  if (
+    !entityName ||
+    !deviceIMEI ||
+    !simICCId ||
+    !batterySLNo ||
+    !panelSLNo ||
+    !luminarySLNo ||
+    !mobileNo ||
+    !district ||
+    !panchayat ||
+    !block ||
+    !wardNo ||
+    !poleNo ||
+    !installationDate
+  ) {
+    alert("Please enter all required fields.");
     return;
   }
-
+  console.log({
+    entityName,
+    deviceIMEI,
+    simICCId,
+    batterySLNo,
+    panelSLNo,
+    luminarySLNo,
+    mobileNo,
+    district,
+    panchayat,
+    block,
+    wardNo,
+    poleNo,
+    active,
+    installationDate,
+  });
   const deviceData = {
     email: userEmail, // Replace with the actual email variable
-    deviceId: deviceId,
-    deviceCount: deviceCount,
+    entityName,
+    deviceIMEI,
+    simICCId,
+    batterySLNo,
+    panelSLNo,
+    luminarySLNo,
+    mobileNo,
+    district,
+    panchayat,
+    block,
+    wardNo,
+    poleNo,
+    active,
+    installationDate,
   };
 
   console.log("Saving device data:", deviceData);
@@ -761,19 +811,69 @@ function saveDeviceData() {
       console.log("Device data saved:", data);
       alert("Device data saved successfully!");
       // Optionally clear form fields after saving
-      document.getElementById("device-id").value = "";
-      document.getElementById("device-count").value = 1;
+      document.getElementById("entity-name").value = "";
+      document.getElementById("device-imei").value = "";
+      document.getElementById("sim-icc-id").value = "";
+      document.getElementById("battery-sl-no").value = "";
+      document.getElementById("panel-sl-no").value = "";
+      document.getElementById("luminary-sl-no").value = "";
+      document.getElementById("mobile-no").value = "";
+      document.getElementById("district").value = "";
+      document.getElementById("panchayat").value = "";
+      document.getElementById("block").value = "";
+      document.getElementById("ward-no").value = "";
+      document.getElementById("pole-no").value = "";
+      document.getElementById("active").checked = false;
+      document.getElementById("installation-date").value = "";
     })
     .catch((error) => {
       console.error("Error saving device data:", error);
       alert("Failed to save device data. Please try again.");
     });
 }
+document
+  .getElementById("view-device-link")
+  .addEventListener("click", function () {
+    showContent("view-device-content");
+    fetchDeviceData();
+  });
 
-function adjustDeviceCount(amount) {
-  const deviceCountInput = document.getElementById("device-count");
-  let currentCount = parseInt(deviceCountInput.value, 10);
-  currentCount += amount;
-  if (currentCount < 1) currentCount = 1;
-  deviceCountInput.value = currentCount;
+function fetchDeviceData() {
+  fetch("http://localhost:3001/getDevices")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Server responded with status ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((devices) => {
+      const deviceList = document.getElementById("device-list");
+      deviceList.innerHTML = "";
+
+      devices.forEach((device) => {
+        const deviceDiv = document.createElement("div");
+        deviceDiv.className = "device";
+        deviceDiv.innerHTML = `
+          <h3>${device.entityName}</h3>
+          <p><strong>Device IMEI:</strong> ${device.deviceIMEI}</p>
+          <p><strong>SIM ICC ID:</strong> ${device.simICCId}</p>
+          <p><strong>Battery SL No:</strong> ${device.batterySLNo}</p>
+          <p><strong>Panel SL No:</strong> ${device.panelSLNo}</p>
+          <p><strong>Luminary SL No:</strong> ${device.luminarySLNo}</p>
+          <p><strong>Mobile No:</strong> ${device.mobileNo}</p>
+          <p><strong>District:</strong> ${device.district}</p>
+          <p><strong>Panchayat:</strong> ${device.panchayat}</p>
+          <p><strong>Block:</strong> ${device.block}</p>
+          <p><strong>Ward No:</strong> ${device.wardNo}</p>
+          <p><strong>Pole No:</strong> ${device.poleNo}</p>
+          <p><strong>Active:</strong> ${device.active}</p>
+          <p><strong>Installation Date:</strong> ${device.installationDate}</p>
+        `;
+        deviceList.appendChild(deviceDiv);
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching device data:", error);
+      alert("Failed to fetch device data. Please try again.");
+    });
 }
