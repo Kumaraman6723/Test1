@@ -9,6 +9,8 @@
       body {
         font-family: Arial, sans-serif;
         margin: 20px;
+        background-color: #f4f4f9;
+        color: #333;
       }
 
       /* Styling for the table */
@@ -16,34 +18,88 @@
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       /* Styling for table headers and cells */
       th,
       td {
         border: 1px solid #ddd;
-        padding: 8px;
+        padding: 12px;
         text-align: left;
       }
 
       /* Background color for table headers */
       th {
-        background-color: #f2f2f2;
+        background-color: #007bff;
+        color: white;
       }
 
       /* Background color for even rows */
       tr:nth-child(even) {
         background-color: #f9f9f9;
       }
+
+      /* Styling for buttons */
+      .button-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      /* Styling for h1 */
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+
+      /* Additional button for dashboard */
+      #dashboardButton {
+        margin-bottom: 20px;
+      }
     </style>
   </head>
   <body>
     <h1>Log Table</h1>
+
+    <button
+      id="dashboardButton"
+      onclick="window.location.href='http://127.0.0.1:5501/Admindashboard.html'"
+    >
+      Back to Dashboard
+    </button>
+
+    <div class="button-container">
+      <button id="prevButton">Previous</button>
+      <button id="nextButton">Next</button>
+    </div>
+
     <!-- Table to display log data -->
     <table id="logTable">
       <thead>
         <tr>
           <th>Date</th>
+          <th>IP Address</th>
           <th>Event Type</th>
           <th>Event Description</th>
         </tr>
@@ -54,15 +110,32 @@
     </table>
 
     <script>
+      let currentPage = 1;
+      const itemsPerPage = 10; // Number of log entries to display per page
+
       // Fetch log data from server and populate table
       document.addEventListener("DOMContentLoaded", () => {
-        fetchLogData();
+        fetchLogData(currentPage);
+      });
+
+      document.getElementById("prevButton").addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
+          fetchLogData(currentPage);
+        }
+      });
+
+      document.getElementById("nextButton").addEventListener("click", () => {
+        currentPage++;
+        fetchLogData(currentPage);
       });
 
       // Function to fetch log data from the server
-      async function fetchLogData() {
+      async function fetchLogData(page) {
         try {
-          const response = await fetch("http://localhost:3001/logs"); // URL to fetch log data from
+          const response = await fetch(
+            `http://localhost:3001/logs?page=${page}&limit=${itemsPerPage}`
+          ); // URL to fetch log data from
           if (!response.ok) {
             throw new Error("Failed to fetch log data");
           }
@@ -83,10 +156,11 @@
         logData.forEach((log) => {
           const row = document.createElement("tr");
           row.innerHTML = `
-          <td>${new Date(log.timestamp).toLocaleString()}</td>
-          <td>${log.eventType}</td>
-          <td>${log.eventDescription}</td>
-        `;
+            <td>${new Date(log.timestamp).toLocaleString()}</td>
+            <td>${log.ipAddress}</td>
+            <td>${log.eventType}</td>
+            <td>${log.eventDescription}</td>
+          `;
           logTableBody.appendChild(row); // Append the row to the table body
         });
       }
