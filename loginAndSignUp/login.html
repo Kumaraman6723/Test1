@@ -3,54 +3,151 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>demo</title>
+    <title>Authentication Portal</title>
     <!-- Link to external stylesheet -->
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <!-- Header Section -->
     <header>
-      <h1>demo</h1>
+      <h1>Authentication Portal</h1>
     </header>
 
-    <!-- Login Container -->
+    <!-- Container -->
     <div class="login-container">
       <div class="wrapper">
         <div id="formContent">
           <!-- Tabs Titles -->
-          <h2 class="active">Sign In</h2>
-          <h2 class="inactive underlineHover">
-            <a href="signup.html">Sign Up</a>
-          </h2>
-          <br />
-          <h2>Login</h2>
-          <br />
+          <div class="tab">
+            <button
+              class="tablinks"
+              onclick="openTab(event, 'UserSignIn')"
+              id="defaultOpen"
+            >
+              User Sign In
+            </button>
+            <button class="tablinks" onclick="openTab(event, 'UserSignUp')">
+              User Sign Up
+            </button>
+            <button class="tablinks" onclick="openTab(event, 'AdminSignIn')">
+              Admin Sign In
+            </button>
+          </div>
 
-          <!-- Login Form -->
-          <form class="login-form" id="loginForm">
-            <input
-              type="text"
-              id="UserId"
-              class="fadeIn second"
-              name="UserId"
-              placeholder="Enter User Name"
-              required
-            />
-            <input
-              type="password"
-              id="password"
-              class="fadeIn third"
-              name="password"
-              placeholder="Enter Password"
-              required
-            />
-            <input type="submit" class="fadeIn fourth" value="Log In" />
-          </form>
+          <!-- User Sign In Section -->
+          <div id="UserSignIn" class="tabcontent">
+            <h2>User Sign In</h2>
+            <form class="login-form" id="loginForm">
+              <input
+                type="text"
+                id="UserId"
+                class="fadeIn second"
+                name="UserId"
+                placeholder="Enter User Name"
+                required
+              />
+              <input
+                type="password"
+                id="password"
+                class="fadeIn third"
+                name="password"
+                placeholder="Enter Password"
+                required
+              />
+              <input type="submit" class="fadeIn fourth" value="Log In" />
+            </form>
+            <!-- Google Sign-In Button -->
+            <button
+              onclick="signIn()"
+              class="fadeIn fourth google-signin-button"
+            >
+              Sign In With Google
+            </button>
+          </div>
 
-          <!-- Google Sign-In Button -->
-          <button onclick="signIn()" class="fadeIn fourth google-signin-button">
-            Sign In With Google
-          </button>
+          <!-- User Sign Up Section -->
+          <div id="UserSignUp" class="tabcontent">
+            <h2>Create Your Account</h2>
+            <form class="login-form">
+              <input
+                type="text"
+                id="username"
+                class="fadeIn second"
+                name="username"
+                placeholder="Enter Username"
+                required
+              />
+              <input
+                type="text"
+                id="fullName"
+                class="fadeIn second"
+                name="fullName"
+                placeholder="Enter Full Name"
+                required
+              />
+              <input
+                type="text"
+                id="contactNumber"
+                class="fadeIn second"
+                name="contactNumber"
+                placeholder="Enter Contact Number"
+                required
+              />
+              <input
+                type="password"
+                id="password"
+                class="fadeIn third"
+                name="password"
+                placeholder="Enter Password"
+                required
+              />
+              <input
+                type="password"
+                id="confirmPassword"
+                class="fadeIn third"
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                required
+              />
+              <input type="submit" class="fadeIn fourth" value="Sign Up" />
+            </form>
+            <!-- Google Sign-In Button -->
+            <button
+              onclick="signIn()"
+              class="fadeIn fourth google-signin-button"
+            >
+              Sign In With Google
+            </button>
+          </div>
+
+          <!-- Admin Sign In Section -->
+          <div id="AdminSignIn" class="tabcontent">
+            <h2>Admin Sign In</h2>
+            <form
+              class="login-form"
+              id="adminLoginForm"
+              onsubmit="adminLogin(event)"
+            >
+              <input
+                type="text"
+                id="adminUserId"
+                class="fadeIn second"
+                name="adminUserId"
+                placeholder="Admin Username"
+                required
+              />
+              <input
+                type="password"
+                id="adminPassword"
+                class="fadeIn third"
+                name="adminPassword"
+                placeholder="Password"
+                required
+              />
+              <input type="submit" class="fadeIn fourth" value="Log In" />
+            </form>
+            <!-- Google Sign-In Button -->
+          </div>
         </div>
       </div>
     </div>
@@ -61,6 +158,25 @@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
 
     <!-- Footer Section -->
-    <footer>&copy; demo</footer>
+    <footer>&copy; demo.</footer>
+
+    <!-- JavaScript for Tabs -->
+    <script>
+      function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+      }
+
+      document.getElementById("defaultOpen").click();
+    </script>
   </body>
 </html>
