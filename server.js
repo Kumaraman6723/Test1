@@ -407,6 +407,8 @@ app.post("/storeDeviceInfo", (req, res) => {
     return res.status(400).json({ error: "All fields are required." });
   }
 
+  const activeValue = active === "true" ? 1 : 0; // Convert 'true'/'false' to 1/0
+
   const fetchDeviceQuery =
     "SELECT * FROM devices WHERE email = ? AND deviceIMEI = ?";
   db.query(fetchDeviceQuery, [email, deviceIMEI], (err, results) => {
@@ -440,7 +442,7 @@ app.post("/storeDeviceInfo", (req, res) => {
           block,
           wardNo,
           poleNo,
-          active,
+          activeValue,
           installationDate,
           email,
           deviceIMEI,
@@ -469,7 +471,7 @@ app.post("/storeDeviceInfo", (req, res) => {
               block,
               wardNo,
               poleNo,
-              active,
+              active: activeValue,
               installationDate,
             },
           };
@@ -500,7 +502,7 @@ app.post("/storeDeviceInfo", (req, res) => {
           block,
           wardNo,
           poleNo,
-          active,
+          activeValue,
           installationDate,
         ],
         (err, result) => {
@@ -527,7 +529,7 @@ app.post("/storeDeviceInfo", (req, res) => {
               block,
               wardNo,
               poleNo,
-              active,
+              active: activeValue,
               installationDate,
             },
           };
