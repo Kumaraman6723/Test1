@@ -724,20 +724,20 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 });
 function saveDeviceData() {
-  const entityName = document.getElementById("entity-name").value;
-  const deviceIMEI = document.getElementById("device-imei").value;
-  const simICCId = document.getElementById("sim-icc-id").value;
-  const batterySLNo = document.getElementById("battery-sl-no").value;
-  const panelSLNo = document.getElementById("panel-sl-no").value;
-  const luminarySLNo = document.getElementById("luminary-sl-no").value;
-  const mobileNo = document.getElementById("mobile-no").value;
+  const entityName = document.getElementById("entityName").value;
+  const deviceIMEI = document.getElementById("deviceIMEI").value;
+  const simICCId = document.getElementById("simICCId").value;
+  const batterySLNo = document.getElementById("batterySLNo").value;
+  const panelSLNo = document.getElementById("panelSLNo").value;
+  const luminarySLNo = document.getElementById("luminarySLNo").value;
+  const mobileNo = document.getElementById("mobileNo").value;
   const district = document.getElementById("district").value;
   const panchayat = document.getElementById("panchayat").value;
   const block = document.getElementById("block").value;
-  const wardNo = document.getElementById("ward-no").value;
-  const poleNo = document.getElementById("pole-no").value;
-  const active = document.getElementById("active").checked;
-  const installationDate = document.getElementById("installation-date").value;
+  const wardNo = document.getElementById("wardNo").value;
+  const poleNo = document.getElementById("poleNo").value;
+  const active = document.getElementById("active").value;
+  const installationDate = document.getElementById("installationDate").value;
 
   if (
     !entityName ||
@@ -757,22 +757,7 @@ function saveDeviceData() {
     alert("Please enter all required fields.");
     return;
   }
-  console.log({
-    entityName,
-    deviceIMEI,
-    simICCId,
-    batterySLNo,
-    panelSLNo,
-    luminarySLNo,
-    mobileNo,
-    district,
-    panchayat,
-    block,
-    wardNo,
-    poleNo,
-    active,
-    installationDate,
-  });
+
   const deviceData = {
     email: userEmail, // Replace with the actual email variable
     entityName,
@@ -811,31 +796,26 @@ function saveDeviceData() {
       console.log("Device data saved:", data);
       alert("Device data saved successfully!");
       // Optionally clear form fields after saving
-      document.getElementById("entity-name").value = "";
-      document.getElementById("device-imei").value = "";
-      document.getElementById("sim-icc-id").value = "";
-      document.getElementById("battery-sl-no").value = "";
-      document.getElementById("panel-sl-no").value = "";
-      document.getElementById("luminary-sl-no").value = "";
-      document.getElementById("mobile-no").value = "";
-      document.getElementById("district").value = "";
-      document.getElementById("panchayat").value = "";
-      document.getElementById("block").value = "";
-      document.getElementById("ward-no").value = "";
-      document.getElementById("pole-no").value = "";
-      document.getElementById("active").checked = false;
-      document.getElementById("installation-date").value = "";
+      document.getElementById("device-form").reset();
     })
     .catch((error) => {
       console.error("Error saving device data:", error);
       alert("Failed to save device data. Please try again.");
     });
 }
+
 document
   .getElementById("view-device-link")
   .addEventListener("click", function () {
     showContent("view-device-content");
     fetchDeviceData();
+  });
+
+document
+  .getElementById("device-form")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
+    saveDeviceData();
   });
 
 function fetchDeviceData() {
