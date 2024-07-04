@@ -18,29 +18,50 @@
         border: 1px solid #ccc; /* Example border for clarity */
         margin-top: 20px; /* Adjust spacing as needed */
       }
+
+      /* Back to Dashboard button styling */
+      .back-to-dashboard {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 20px 0;
+        background-color: #4caf50; /* Green background color */
+        color: white; /* White text color */
+        text-decoration: none; /* Remove underline */
+        border-radius: 5px; /* Rounded corners */
+        transition: background-color 0.3s ease; /* Smooth transition */
+      }
+
+      .back-to-dashboard:hover {
+        background-color: #45a049; /* Darker green on hover */
+      }
     </style>
   </head>
   <body>
+    <!-- Back to Dashboard Button -->
+    <a href="dashboard.html" class="back-to-dashboard">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+
     <!-- Main Container -->
     <div class="container">
       <!-- Left Navigation Box -->
       <div class="leftbox">
         <nav>
-          <a onclick="tabs(0)" class="tab active">
+          <a onclick="tabs(0)" class="tab active" data-index="0">
             <img
               src="https://img.icons8.com/?size=50&id=23264&format=png&color=000000"
               alt="Custom Tab Icon"
               style="width: 30px; height: 30px"
             />
           </a>
-          <a onclick="tabs(1)" class="tab">
+          <a onclick="tabs(1)" class="tab" data-index="1">
             <img
               src="https://img.icons8.com/?size=50&id=53373&format=png&color=000000"
               alt="Custom Tab Icon"
               style="width: 30px; height: 30px"
             />
           </a>
-          <a onclick="tabs(2)" class="tab">
+          <a onclick="tabs(2)" class="tab" data-index="2">
             <img
               src="https://img.icons8.com/?size=50&id=EPPPtsN88vTz&format=png&color=000000"
               alt="Custom Tab Icon"
@@ -129,8 +150,8 @@
     <button onclick="signOut()" class="sign-out-btn">Sign Out</button>
     <!-- External JavaScript Files -->
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
-    <script src="script.js" defer></script>
     <script src="path/to/intl-tel-input/js/intlTelInput.js"></script>
+    <script src="script.js" defer></script>
     <script>
       // Function to fetch token from database
       async function fetchTokenFromDatabase(email) {
@@ -214,12 +235,14 @@
                 iti.setCountry(countryCode); // Set the selected country in the intl-tel-input plugin
               } else {
                 console.log("Country code not found.");
-                document.getElementById("countryCode").value = "";
+                document.getElementById("countryCode").value =
+                  "Country code not found";
               }
             })
             .catch((error) => {
               console.error("Error fetching country code:", error);
-              document.getElementById("countryCode").value = "";
+              document.getElementById("countryCode").value =
+                "Error fetching country code";
             });
         }
 
@@ -294,7 +317,9 @@
       // Function to handle tab switching
       function tabs(tabIndex) {
         const tabs = document.querySelectorAll(".tab");
-        const tabShows = document.querySelectorAll(".tabShow, .tabHide");
+        const tabShows = document.querySelectorAll(
+          ".profile, .organization, .token"
+        );
 
         tabs.forEach((tab, index) => {
           if (index === tabIndex) {
@@ -318,19 +343,18 @@
         });
       }
 
-      // Event listener for DOM content loaded
-      document.addEventListener("DOMContentLoaded", function () {
-        var input = document.querySelector("#Contact");
-        var iti = window.intlTelInput(input, {
-          separateDialCode: true,
-          initialCountry: "auto",
-          utilsScript: "path/to/intl-tel-input/js/utils.js",
-        });
-
-        input.addEventListener("countrychange", function () {
-          var countryCode = iti.getSelectedCountryData().dialCode;
-          document.getElementById("countryCode").value = countryCode;
-        });
+      const input = document.querySelector("#Contact");
+      const iti = window.intlTelInput(input, {
+        initialCountry: "auto",
+        geoIpLookup: function (callback) {
+          fetch("https://ipapi.co/json")
+            .then(function (res) {
+              return res.json();
+            })
+            .then(function (data) {
+              callback(data.country_code);
+            });
+        },
       });
     </script>
   </body>
