@@ -216,23 +216,23 @@ function signOut() {
           .then(function () {
             console.log("User signed out.");
             localStorage.removeItem("authinfo");
-            window.location.href = "http://127.0.0.1:5501/signup.html"; // Redirect to login page
+            window.location.href = "http://127.0.0.1:5501/login.html"; // Redirect to login page
           })
           .catch((error) => {
             console.error("Error signing out:", error);
             // Redirect to login page in case of an error during sign-out
-            window.location.href = "http://127.0.0.1:5501/signup.html";
+            window.location.href = "http://127.0.0.1:5501/login.html";
           });
       } else {
         console.error("Error revoking token:", response.statusText);
         // Redirect to login page even if token revocation fails
-        window.location.href = "http://127.0.0.1:5501/signup.html";
+        window.location.href = "http://127.0.0.1:5501/login.html";
       }
     })
     .catch((error) => {
       console.error("Error revoking token:", error);
       // Redirect to login page in case of an error during token revocation
-      window.location.href = "http://127.0.0.1:5501/signup.html";
+      window.location.href = "http://127.0.0.1:5501/login.html";
     });
 }
 document.addEventListener("DOMContentLoaded", function () {
@@ -857,3 +857,38 @@ function fetchDeviceData() {
       alert("Failed to fetch device data. Please try again.");
     });
 }
+document.getElementById("dashboard-link").addEventListener("click", () => {
+  showContent("dashboard-content");
+});
+
+document.getElementById("user-activity-link").addEventListener("click", () => {
+  showContent("user-activity-content");
+});
+
+document.getElementById("settings-link").addEventListener("click", () => {
+  showContent("settings-content");
+});
+
+function showContent(sectionId) {
+  const sections = document.querySelectorAll(".content-section");
+  sections.forEach((section) => {
+    section.style.display = "none";
+  });
+  document.getElementById(sectionId).style.display = "block";
+}
+function adminLogin(event) {
+  event.preventDefault(); // Prevent the default form submission
+  const adminUserId = document.getElementById("adminUserId").value;
+  const adminPassword = document.getElementById("adminPassword").value;
+
+  // Perform validation and authentication (this is just a basic example)
+  if (adminUserId === "admin" && adminPassword === "admin123") {
+    // Redirect to the admin dashboard
+    window.location.href = "Admindashboard.html";
+  } else {
+    alert("Invalid admin credentials");
+  }
+}
+
+
+
