@@ -1,246 +1,113 @@
-/* BASIC */
-html {
-  background: url("bank.jpg") no-repeat center center fixed;
-  background-size: cover;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
 body {
-  font-family: "Arial", sans-serif;
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
   margin: 0;
   padding: 0;
 }
 
 header {
-  background-color: black;
+  background-color: #4caf50;
   color: white;
   text-align: center;
   padding: 1em 0;
-  border-bottom: 4px solid #001a33;
 }
 
-footer {
-  background-color: black;
-  color: white;
-  text-align: center;
-  padding: 1em 0;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-}
-
-a {
-  color: #ff6600;
-  display: inline-block;
-  text-decoration: none;
-  font-weight: 400;
-}
-
-h2 {
-  text-align: center;
-  font-size: 16px;
-  font-weight: 600;
-  text-transform: uppercase;
-  display: inline-block;
-  margin: 40px 8px 10px 8px;
-  color: white;
-}
-
-/* STRUCTURE */
-.wrapper {
+.login-container {
   display: flex;
-  align-items: center;
-  flex-direction: column;
   justify-content: center;
-  width: 100%;
-  min-height: 100%;
+  align-items: center;
+  height: 80vh;
+}
+
+.wrapper {
+  background-color: #fff;
   padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 #formContent {
-  border-radius: 15px;
-  overflow: hidden;
-  background: #001a33; /* Darker background color */
-  padding: 30px;
-  width: 90%;
-  max-width: 450px;
-  position: relative;
-  padding: 0px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* TABS */
-h2.inactive {
-  color: #003366;
-}
-
-h2.active {
-  color: #ff6600;
-  border-bottom: 2px solid #ff6600;
-}
-
-/* FORM TYPOGRAPHY*/
-input[type="button"],
-input[type="submit"],
-input[type="reset"],
-button[type="button"],
-button[type="submit"] {
-  background-color: #00509e;
-  border: none;
-  color: white;
-  padding: 15px 80px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  text-transform: uppercase;
-  font-size: 13px;
-  box-shadow: 0 10px 30px 0 rgba(0, 80, 158, 0.4);
-  border-radius: 5px;
-  margin: 5px 20px 40px 20px;
-  transition: all 0.3s ease-in-out;
-}
-
-input[type="button"]:hover,
-input[type="submit"]:hover,
-input[type="reset"]:hover,
-button[type="button"]:hover,
-button[type="submit"]:hover {
-  background-color: #003366;
-}
-
-input[type="button"]:active,
-input[type="submit"]:active,
-input[type="reset"]:active,
-button[type="button"]:active,
-button[type="submit"]:active {
-  transform: scale(0.95);
-}
-
-input[type="text"],
-input[type="password"],
-button[type="button"],
-button[type="submit"] {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  box-sizing: border-box;
-  border: none;
-  border-bottom: 2px solid white;
-  background-color: transparent;
-  color: white;
-}
-
-input[type="text"]:focus,
-input[type="password"]:focus,
-button[type="button"]:hover,
-button[type="submit"]:hover {
-  background-color: #001a33;
-  border-bottom: 2px solid #ff6600;
-}
-
-input[type="text"]::placeholder,
-input[type="password"]::placeholder {
-  color: #cccccc;
-}
-
-/* OTHERS */
-*:focus {
-  outline: none;
-}
-
-#icon {
-  width: 40%; /* Smaller logo */
-}
-
-* {
-  box-sizing: border-box;
-}
-.google-signin-button {
-  background-color: #00509e;
-  border: none;
-  color: white;
-  padding: 15px 80px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  text-transform: uppercase;
-  font-size: 13px;
-  box-shadow: 0 10px 30px 0 rgba(0, 80, 158, 0.4);
-  border-radius: 5px;
-  margin: 5px 20px 40px 20px;
-  transition: all 0.3s ease-in-out;
-}
-
-.google-signin-button:hover {
-  background-color: #003366;
-}
-
-.google-signin-button:active {
-  transform: scale(0.95);
-}
-/* Reset some default styles */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  background-color: #f0f0f0;
-  padding: 20px;
-}
-
-header {
-  background-color: #333;
-  color: #fff;
-  padding: 10px;
-  text-align: center;
-}
-
-main {
-  max-width: 600px;
-  margin: 20px auto;
-  background-color: #fff;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.user-info {
+.tab {
+  display: flex;
+  justify-content: center;
   margin-bottom: 20px;
 }
 
-.user-info h2 {
-  font-size: 1.4em;
+.tab button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
 }
 
-.user-info img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin-top: 10px;
+.tab button:hover {
+  background-color: #45a049;
 }
 
-.logout {
+.tab button.active {
+  background-color: #45a049;
+}
+
+.tabcontent {
+  display: none;
+  width: 100%;
+}
+
+#UserSignIn,
+#UserSignUp,
+#AdminSignIn {
+  border: 2px solid #2196f3;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #e3f2fd;
+  width: 300px;
   text-align: center;
 }
 
-#logoutBtn {
-  padding: 10px 20px;
-  background-color: #d9534f;
-  color: #fff;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 1em;
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-#logoutBtn:hover {
-  background-color: #c9302c;
+input[type="submit"],
+button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover,
+button:hover {
+  background-color: #45a049;
+}
+
+.google-signin-button {
+  margin-top: 10px;
+}
+
+footer {
+  text-align: center;
+  padding: 10px 0;
+  background-color: #4caf50;
+  color: white;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
