@@ -621,107 +621,186 @@ document.getElementById("clickable-div").addEventListener("click", function () {
   displayTextDiv.innerHTML = "<p>You clicked on the left-side div!</p>";
 });
 
+document.getElementById("clickable-div").addEventListener("click", function () {
+  const displayTextDiv = document.getElementById("display-text");
+  displayTextDiv.style.display = "block";
+  displayTextDiv.innerHTML = "<p>You clicked on the left-side div!</p>";
+});
+
 document.addEventListener("DOMContentLoaded", function () {
-  var xmlhttp = new XMLHttpRequest();
-  var url = "http://127.0.0.1:5500/jsonData.json";
-  xmlhttp.open("GET", url, true);
-  xmlhttp.send();
-  xmlhttp.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      var data = JSON.parse(this.responseText);
+  const url = "http://127.0.0.1:5500/jsonData.json";
 
-      // Process chart data from JSON
-      var chartLabels = data.chartData.labels;
-      var chartData = data.chartData.datasets.map(function (dataset) {
-        return {
-          label: dataset.label,
-          backgroundColor: dataset.backgroundColor,
-          borderColor: dataset.borderColor,
-          data: dataset.data,
-        };
-      });
+  axios
+    .get(url)
+    .then((response) => {
+      const data = response.data;
+      processChartData(data);
+    })
+    .catch((error) => {
+      console.error("Error fetching data: ", error);
+    });
 
-      // Create Bar Chart
-      const barChartCtx = document.getElementById("barChart").getContext("2d");
-      new Chart(barChartCtx, {
-        type: "bar",
-        data: {
-          labels: chartLabels,
-          datasets: chartData,
+  function processChartData(data) {
+    // Extracting data for charts
+    const labels = []; // Use appropriate labels
+    const voltageData = [];
+    const currentData = [];
+    const powerData = [];
+    const brightnessData = [];
+    const batteryData = [];
+
+    // Assuming `data` contains an array of records
+    data.forEach((record) => {
+      labels.push(record.date); // Use the date field
+
+      voltageData.push(record.PV);
+      currentData.push(record.PC);
+      powerData.push(record.PP);
+      brightnessData.push(record.BrL);
+      batteryData.push(record.BTem);
+    });
+
+    createChart(
+      "voltageChart",
+      "Voltage",
+      labels,
+      voltageData,
+      "Voltage (V)",
+      "voltageTable"
+    );
+    createChart(
+      "currentChart",
+      "Current",
+      labels,
+      currentData,
+      "Current (A)",
+      "currentTable"
+    );
+    createChart(
+      "powerChart",
+      "Power",
+      labels,
+      powerData,
+      "Power (W)",
+      "powerTable"
+    );
+    createChart(
+      "brightnessChart",
+      "Brightness Level",
+      labels,
+      brightnessData,
+      "Brightness (%)",
+      "brightnessTable"
+    );
+    createChart(
+      "batteryChart",
+      "Battery Temperature",
+      labels,
+      batteryData,
+      "Temperature (°C)",
+      "batteryTable"
+    );
+  }
+
+  function createChart(chartId, title, labels, data, yAxisLabel, tableId) {
+    const ctx = document.getElementById(chartId).getContext("2d");
+    new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: title,
+            data: data,
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+            fill: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        title: {
+          display: true,
+          text: title,
         },
-        options: {
-          responsive: true,
-          scales: {
-            x: {
-              beginAtZero: true,
+        scales: {
+          x: {
+            type: "time",
+            time: {
+              unit: "day",
             },
-            y: {
-              beginAtZero: true,
+            title: {
+              display: true,
+              text: "Date",
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: yAxisLabel,
             },
           },
         },
-      });
+      },
+    });
 
-      // Create Line Chart
-      const lineChartCtx = document
-        .getElementById("lineChart")
-        .getContext("2d");
-      new Chart(lineChartCtx, {
-        type: "line",
-        data: {
-          labels: chartLabels,
-          datasets: chartData,
-        },
-        options: {
-          responsive: true,
-          scales: {
-            x: {
-              beginAtZero: true,
-            },
-            y: {
-              beginAtZero: true,
-            },
-          },
-        },
-      });
+    createTable(tableId, labels, data, title);
+  }
 
-      // Sample data for pie chart
-      var pieChartData = data.pieChartData;
+  function createTable(tableId, labels, data, title) {
+    const tableContainer = document.getElementById(tableId);
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    const tbody = document.createElement("tbody");
 
-      // Create Pie Chart
-      const pieChartCtx = document.getElementById("pieChart").getContext("2d");
-      new Chart(pieChartCtx, {
-        type: "pie",
-        data: {
-          labels: pieChartData.labels,
-          datasets: pieChartData.datasets,
-        },
-        options: {
-          responsive: true,
-        },
-      });
+    // Create header row
+    const headerRow = document.createElement("tr");
+    const dateHeader = document.createElement("th");
+    dateHeader.textContent = "Date";
+    const dataHeader = document.createElement("th");
+    dataHeader.textContent = title;
+    headerRow.appendChild(dateHeader);
+    headerRow.appendChild(dataHeader);
+    thead.appendChild(headerRow);
 
-      // Navigation logic
-      const sections = {
-        "dashboard-link": "dashboard-content",
-        "shop-link": "shop-content",
-        "analytics-link": "analytics-content",
-        "tickets-link": "tickets-content",
-        "settings-link": "settings-content",
-        "add-device-link": "device-content",
-      };
-
-      document.querySelectorAll(".side-menu a").forEach((link) => {
-        link.addEventListener("click", function (e) {
-          e.preventDefault();
-          document.querySelectorAll(".content-section").forEach((section) => {
-            section.style.display = "none";
-          });
-          document.getElementById(sections[this.id]).style.display = "block";
-        });
-      });
+    // Create data rows
+    for (let i = 0; i < labels.length; i++) {
+      const row = document.createElement("tr");
+      const dateCell = document.createElement("td");
+      dateCell.textContent = labels[i];
+      const dataCell = document.createElement("td");
+      dataCell.textContent = data[i];
+      row.appendChild(dateCell);
+      row.appendChild(dataCell);
+      tbody.appendChild(row);
     }
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    tableContainer.appendChild(table);
+  }
+
+  // Navigation logic
+  const sections = {
+    "dashboard-link": "dashboard-content",
+    "shop-link": "shop-content",
+    "analytics-link": "analytics-content",
+    "tickets-link": "tickets-content",
+    "settings-link": "settings-content",
+    "add-device-link": "device-content",
+    "view-device-link": "view-device-content",
   };
+
+  document.querySelectorAll(".side-menu a").forEach((link) => {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+      document.querySelectorAll(".content-section").forEach((section) => {
+        section.style.display = "none";
+      });
+      document.getElementById(sections[this.id]).style.display = "block";
+    });
+  });
 });
 function saveDeviceData() {
   const entityName = document.getElementById("entityName").value;
@@ -889,6 +968,3 @@ function adminLogin(event) {
     alert("Invalid admin credentials");
   }
 }
-
-
-
