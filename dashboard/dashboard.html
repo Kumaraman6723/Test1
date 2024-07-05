@@ -10,6 +10,26 @@
     <link rel="stylesheet" href="style1.css" />
     <link rel="stylesheet" href="chart-styles.css" />
     <title>Temp Dashboard</title>
+    <style>
+      .content-section {
+        display: none;
+      }
+      .table-container {
+        margin-top: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
   </head>
   <body>
     <div class="sidebar">
@@ -97,24 +117,32 @@
           <h2>Shop Content</h2>
           <p>Here you can browse and purchase products.</p>
         </div>
-        <div
-          id="analytics-content"
-          class="content-section"
-          style="display: none"
-        >
+        <div id="analytics-content" class="content-section">
           <h2>Analytics Content</h2>
-          <p>Here you can view detailed analytics of your data.</p>
           <div class="chart-container">
-            <h1 class="chart-title">ChartJS Bar Chart with JSON Data API</h1>
-            <canvas id="barChart"></canvas>
+            <h1 class="chart-title">Voltage</h1>
+            <canvas id="voltageChart"></canvas>
+            <div id="voltageTable" class="table-container"></div>
           </div>
           <div class="chart-container">
-            <h1 class="chart-title">ChartJS Line Chart with JSON Data API</h1>
-            <canvas id="lineChart"></canvas>
+            <h1 class="chart-title">Current</h1>
+            <canvas id="currentChart"></canvas>
+            <div id="currentTable" class="table-container"></div>
           </div>
           <div class="chart-container">
-            <h1 class="chart-title">ChartJS Pie Chart with JSON Data API</h1>
-            <canvas id="pieChart"></canvas>
+            <h1 class="chart-title">Power</h1>
+            <canvas id="powerChart"></canvas>
+            <div id="powerTable" class="table-container"></div>
+          </div>
+          <div class="chart-container">
+            <h1 class="chart-title">Brightness Level</h1>
+            <canvas id="brightnessChart"></canvas>
+            <div id="brightnessTable" class="table-container"></div>
+          </div>
+          <div class="chart-container">
+            <h1 class="chart-title">Battery Temperature</h1>
+            <canvas id="batteryChart"></canvas>
+            <div id="batteryTable" class="table-container"></div>
           </div>
         </div>
         <div id="tickets-content" class="content-section" style="display: none">
@@ -138,46 +166,33 @@
           <form id="device-form">
             <label for="entityName">Entity Name</label>
             <input type="text" id="entityName" name="entityName" required />
-
             <label for="deviceIMEI">Device IMEI</label>
             <input type="text" id="deviceIMEI" name="deviceIMEI" required />
-
             <label for="simICCId">SIM ICC ID</label>
             <input type="text" id="simICCId" name="simICCId" required />
-
             <label for="batterySLNo">Battery SL No</label>
             <input type="text" id="batterySLNo" name="batterySLNo" required />
-
             <label for="panelSLNo">Panel SL No</label>
             <input type="text" id="panelSLNo" name="panelSLNo" required />
-
             <label for="luminarySLNo">Luminary SL No</label>
             <input type="text" id="luminarySLNo" name="luminarySLNo" required />
-
             <label for="mobileNo">Mobile No</label>
             <input type="text" id="mobileNo" name="mobileNo" required />
-
             <label for="district">District</label>
             <input type="text" id="district" name="district" required />
-
             <label for="panchayat">Panchayat</label>
             <input type="text" id="panchayat" name="panchayat" required />
-
             <label for="block">Block</label>
             <input type="text" id="block" name="block" required />
-
             <label for="wardNo">Ward No</label>
             <input type="text" id="wardNo" name="wardNo" required />
-
             <label for="poleNo">Pole No</label>
             <input type="text" id="poleNo" name="poleNo" required />
-
             <label for="active">Active</label>
             <select id="active" name="active" required>
               <option value="true">True</option>
               <option value="false">False</option>
             </select>
-
             <label for="installationDate">Installation Date</label>
             <input
               type="date"
@@ -185,7 +200,6 @@
               name="installationDate"
               required
             />
-
             <button type="submit">Submit</button>
           </form>
         </div>
@@ -201,6 +215,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@latest"></script>
     <script src="script.js"></script>
   </body>
 </html>
